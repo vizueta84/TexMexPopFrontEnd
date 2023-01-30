@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from "react";
 import cookie from "cookie";
+import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({ loggedIn, setLoggedIn }) {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  
+  useEffect(() => {
+    if (loggedIn) {
+      navigate("/");
+    }
+  }, [loggedIn]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch("https://tex-mex-fx23eqhg9-vizueta84.vercel.app/users/login", {
+    fetch("https://tex-mex-pop.vercel.app/users/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -24,6 +32,8 @@ export default function Login() {
         document.cookie = cookie.serialize("token", data.token, {
           maxAge: 1000 * 60,
         });
+        setLoggedIn(true);
+        navigate("/");
       });
   };
 

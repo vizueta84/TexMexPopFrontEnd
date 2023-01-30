@@ -6,28 +6,58 @@ import SignUp from "./pages/SignUp";
 import RestaurantList from "./pages/RestaurantList";
 import NewRating from "./pages/NewRating";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Header from "./components/Header";
+
 
 const Router = () => {
-    const [allRestaurants, setAllRestaurants] = useState([])
+  const [allRestaurants, setAllRestaurants] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    fetch("https://tex-mex-fx23eqhg9-vizueta84.vercel.app/ratings")
+    fetch("https:/tex-mex-pop.vercel.app/ratings")
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        setAllRestaurants(data)
+        setAllRestaurants(data);
       });
   }, []);
 
   return (
-    <Routes>
-      <Route path={"/"} element={<RestaurantList allRestaurants={allRestaurants} />} />
-      <Route path={"/login"} element={<Login />} />
-      <Route path={"/signup"} element={<SignUp />} />
-      <Route path={"/add-restaurant"} element={<AddRestaurant />} />
-      <Route path={"/new-rating"} element={<ProtectedRoute component={NewRating} />} />
-    </Routes>
+    <>
+      <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      <Routes>
+        <Route
+          path={"/"}
+          element={
+            <RestaurantList
+              allRestaurants={allRestaurants}
+              loggedIn={loggedIn}
+              setLoggedIn={setLoggedIn}
+            />
+          }
+        />
+        <Route
+          path={"/login"}
+          element={<Login loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
+        />
+        <Route path={"/signup"} element={<SignUp />} />
+        <Route
+          path={"/add-restaurant"}
+          element={
+            <ProtectedRoute
+              component={AddRestaurant}
+              setAllRestaurants={setAllRestaurants}
+              allRestaurants={allRestaurants}
+            />
+          }
+        />
+        <Route
+          path={"/new-rating"}
+          element={<ProtectedRoute component={NewRating} />}
+        />
+      </Routes>
+    </>
   );
 };
 
